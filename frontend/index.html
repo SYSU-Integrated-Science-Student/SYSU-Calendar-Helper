@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>课程表转 Apple Calendar</title>
+    <script src="https://cdn.jsdelivr.net/npm/@unocss/runtime/uno.global.js" defer></script>
+  </head>
+  <body class="min-h-screen bg-[#f5f5f7] font-sans text-[#1d1d1f]">
+    <main class="mx-auto max-w-4xl px-6 py-12 space-y-12">
+      <header class="space-y-3">
+        <p class="text-sm uppercase tracking-[0.3em] text-neutral-500">Calendar Helper</p>
+        <h1 class="text-3xl font-semibold sm:text-4xl">转换课表 · 导入 Apple Calendar</h1>
+        <p class="max-w-2xl text-sm leading-relaxed text-neutral-600">
+          上传教务导出的 Word 课表（DOCX / Flat OPC XML），设置学期开始日期与时区，即可预览课程安排并导出标准 ICS 文件。
+        </p>
+      </header>
+
+      <section class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.8fr)]">
+        <article class="rounded-[28px] bg-white shadow-[0_24px_60px_rgba(0,0,0,0.06)] ring-1 ring-black/5">
+          <div class="border-b border-black/5 px-6 py-5">
+            <h2 class="text-base font-semibold">课程表设置</h2>
+            <p class="text-xs text-neutral-500">完善基础信息后点击“解析课程表”即可开始。</p>
+          </div>
+          <div class="space-y-6 px-6 py-6">
+            <div class="grid gap-4 md:grid-cols-2">
+              <label class="flex flex-col gap-2">
+                <span class="text-xs font-medium text-neutral-500">课程表文件</span>
+                <input id="file-input" type="file" accept=".xml,.docx,.txt" class="rounded-2xl border border-neutral-300 bg-white px-3 py-3 text-sm focus:border-black/60 focus:outline-none focus:ring-2 focus:ring-black/10" />
+              </label>
+              <label class="flex flex-col gap-2">
+                <span class="text-xs font-medium text-neutral-500">第一周周一</span>
+                <input id="start-date" type="date" value="2025-09-08" class="rounded-2xl border border-neutral-300 bg-white px-3 py-3 text-sm focus:border-black/60 focus:outline-none focus:ring-2 focus:ring-black/10" />
+              </label>
+              <label class="flex flex-col gap-2 md:col-span-2">
+                <span class="text-xs font-medium text-neutral-500">时区</span>
+                <input id="timezone" type="text" value="Asia/Shanghai" list="tz-options" class="rounded-2xl border border-neutral-300 bg-white px-3 py-3 text-sm focus:border-black/60 focus:outline-none focus:ring-2 focus:ring-black/10" />
+                <datalist id="tz-options">
+                  <option value="Asia/Shanghai"></option>
+                  <option value="Asia/Hong_Kong"></option>
+                  <option value="Asia/Taipei"></option>
+                  <option value="Asia/Tokyo"></option>
+                  <option value="Asia/Singapore"></option>
+                </datalist>
+              </label>
+            </div>
+            <div class="flex flex-wrap gap-3">
+              <button id="parse-btn" class="inline-flex items-center gap-2 rounded-[18px] border border-neutral-300 bg-neutral-100 px-5 py-2.5 text-sm font-medium text-[#1d1d1f] transition hover:bg-neutral-200 focus:outline-none focus:ring-2 focus:ring-black/10 disabled:cursor-not-allowed disabled:opacity-50">
+                解析课程表
+              </button>
+              <button id="download-btn" class="inline-flex items-center gap-2 rounded-[18px] border border-neutral-300 bg-neutral-50 px-5 py-2.5 text-sm font-medium text-[#1d1d1f] transition hover:bg-neutral-200 focus:outline-none focus:ring-2 focus:ring-black/10 disabled:cursor-not-allowed disabled:opacity-50" disabled>
+                下载 ICS
+              </button>
+            </div>
+            <div id="status" class="rounded-2xl border border-black/5 bg-neutral-50 px-4 py-2 text-sm text-neutral-600"></div>
+          </div>
+        </article>
+
+        <aside class="flex flex-col gap-4 rounded-[28px] border border-black/5 bg-white px-6 py-6 text-sm text-neutral-700 shadow-[0_20px_40px_rgba(0,0,0,0.04)]">
+          <h3 class="text-base font-semibold text-[#1d1d1f]">使用提示</h3>
+          <ul class="space-y-3 leading-relaxed">
+            <li>支持 Word 导出的 DOCX 和 Flat OPC XML。</li>
+            <li>请确认第一周周一对应实际开学日期，默认值为 <code class="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-xs">2025-09-08</code>。</li>
+            <li>时区用于生成日历事件，请确保与授课地点一致。</li>
+            <li>解析完成后可先检查课程详情，再导出 ICS 导入日历应用。</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section id="summary" class="hidden space-y-6">
+        <div class="rounded-[28px] border border-black/5 bg-white px-6 py-6 shadow-[0_20px_40px_rgba(0,0,0,0.04)]">
+          <div class="flex flex-wrap items-center gap-4">
+            <div class="space-y-1">
+              <h2 class="text-2xl font-semibold" id="summary-title"></h2>
+              <p class="text-xs uppercase tracking-[0.18em] text-neutral-500" id="summary-meta"></p>
+            </div>
+            <div class="flex flex-wrap gap-3 text-xs font-medium text-neutral-700">
+              <span class="rounded-full border border-neutral-300 px-3 py-1" id="summary-courses"></span>
+              <span class="rounded-full border border-neutral-300 px-3 py-1" id="summary-occurrences"></span>
+            </div>
+          </div>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2" id="events"></div>
+      </section>
+    </main>
+    <script type="module" src="./app.js"></script>
+    <script type="module" src="./calendar.js"></script>
+  </body>
+</html>

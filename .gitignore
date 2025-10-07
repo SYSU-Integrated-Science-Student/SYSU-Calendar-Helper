@@ -1,0 +1,13 @@
+# Node dependencies
+node_modules/
+.pnpm-store/
+
+# Cloudflare Wrangler local state
+.wrangler/
+
+# Build outputs
+frontend/dist/
+dist/
+
+# Misc
+.DS_Store

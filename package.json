@@ -1,0 +1,26 @@
+{
+  "name": "calendar-helper",
+  "version": "0.1.0",
+  "description": "Convert Word timetable exports into Apple Calendar ICS files.",
+  "type": "module",
+  "packageManager": "pnpm@10.14.0",
+  "engines": {
+    "node": ">=18"
+  },
+  "bin": {
+    "generate-ics": "bin/generate-ics.js",
+    "serve-frontend": "bin/serve-frontend.js"
+  },
+  "scripts": {
+    "generate:ics": "node bin/generate-ics.js",
+    "generate:json": "node bin/generate-ics.js --format json",
+    "frontend:serve": "node bin/serve-frontend.js",
+    "frontend:serve:open": "node bin/serve-frontend.js --open",
+    "check": "node --check bin/generate-ics.js && node --check src/schedule.js && node --check frontend/app.js",
+    "cf:dev": "wrangler dev",
+    "cf:deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "jszip": "^3.10.1"
+  }
+}

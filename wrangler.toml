@@ -1,0 +1,10 @@
+name = "calendar-helper"
+main = "worker.js"
+compatibility_date = "2025-01-15"
+
+[assets]
+directory = "./frontend"
+binding = "ASSETS"
+
+[vars]
+DEFAULT_TIMEZONE = "Asia/Shanghai"
