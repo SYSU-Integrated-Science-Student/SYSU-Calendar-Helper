@@ -3,7 +3,8 @@ main = "worker.js"
 compatibility_date = "2025-01-15"
 
 [assets]
-directory = "./frontend"
+# Deploy the static bundle emitted by the frontend build (e.g. Vite under pnpm run build)
+directory = "./dist"
 binding = "ASSETS"
 
 [vars]
