@@ -1,4 +1,4 @@
-name = "calendar-helper"
+name = "sysu-calendar-helper"
 main = "worker.js"
 compatibility_date = "2025-01-15"
 
