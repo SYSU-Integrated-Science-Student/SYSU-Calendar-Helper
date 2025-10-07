@@ -2,6 +2,10 @@ name = "calendar-helper"
 main = "worker.js"
 compatibility_date = "2025-01-15"
 
+[build]
+# Ensure static assets are prepared before deployment in CI
+command = "pnpm run build"
+
 [assets]
 # Deploy the static bundle emitted by the frontend build (e.g. Vite under pnpm run build)
 directory = "./dist"

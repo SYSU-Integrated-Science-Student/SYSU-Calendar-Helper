@@ -12,6 +12,7 @@
     "serve-frontend": "bin/serve-frontend.js"
   },
   "scripts": {
+    "build": "node bin/build-assets.js",
     "generate:ics": "node bin/generate-ics.js",
     "generate:json": "node bin/generate-ics.js --format json",
     "frontend:serve": "node bin/serve-frontend.js",
